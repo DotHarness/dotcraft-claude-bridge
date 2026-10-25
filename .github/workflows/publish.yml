@@ -28,8 +28,10 @@ jobs:
         run: |
           dotnet test tests/DotCraft.ClaudeCode.Tests/DotCraft.ClaudeCode.Tests.csproj -c Release
           if ($LASTEXITCODE) { throw 'Bridge tests failed.' }
-          npm test --prefix desktop
+          Push-Location desktop
+          npm test
           if ($LASTEXITCODE) { throw 'Desktop module tests failed.' }
+          Pop-Location
       - uses: actions/upload-artifact@v4
         with:
           name: claude-code-plugin

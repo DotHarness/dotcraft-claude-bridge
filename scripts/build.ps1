@@ -1,11 +1,14 @@
 $ErrorActionPreference = 'Stop'
 $root = [IO.Path]::GetFullPath("$PSScriptRoot/..")
 
-$desktop = Join-Path $root 'desktop'
-& npm install --prefix $desktop --no-audit --no-fund
-if ($LASTEXITCODE) { throw 'Desktop module install failed.' }
-& npm run build --prefix $desktop
-if ($LASTEXITCODE) { throw 'Desktop module build failed.' }
+Push-Location (Join-Path $root 'desktop')
+try {
+    & npm install --no-audit --no-fund
+    if ($LASTEXITCODE) { throw 'Desktop module install failed.' }
+    & npm run build
+    if ($LASTEXITCODE) { throw 'Desktop module build failed.' }
+}
+finally { Pop-Location }
 
 $project = Join-Path $root 'src/DotCraft.ClaudeCode/DotCraft.ClaudeCode.csproj'
 & dotnet build $project -c Release --nologo
