@@ -1,0 +1,21 @@
+{
+  "name": "dotcraft-claude-code-desktop",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "dotcraft-plugin build",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "test": "vitest run --environment jsdom"
+  },
+  "devDependencies": {
+    "@dotcraft/plugin": "^0.9.4",
+    "@testing-library/react": "^16.3.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "jsdom": "^26.1.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "typescript": "^5.7.0",
+    "vitest": "^3.2.4"
+  }
+}

@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
+    <PackageReference Include="xunit" Version="2.9.3" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="3.1.4" />
+    <ProjectReference Include="../../src/DotCraft.ClaudeCode/DotCraft.ClaudeCode.csproj" />
+    <PackageReference Include="DotCraft.Harness" Version="0.9.4" />
+    <ProjectReference Include="../DotCraft.ClaudeCode.FakeCli/DotCraft.ClaudeCode.FakeCli.csproj" ReferenceOutputAssembly="false" />
+  </ItemGroup>
+  <Target Name="CopyFakeCli" AfterTargets="Build">
+    <ItemGroup>
+      <FakeCli Include="../DotCraft.ClaudeCode.FakeCli/bin/$(Configuration)/net10.0/*" />
+      <PluginFixture Include="../../src/DotCraft.ClaudeCode/bin/$(Configuration)/net10.0/plugin/**/*" />
+    </ItemGroup>
+    <Copy SourceFiles="@(FakeCli)" DestinationFolder="$(OutDir)fake-cli" />
+    <Copy SourceFiles="@(PluginFixture)" DestinationFiles="@(PluginFixture->'$(OutDir)claude-code-plugin/%(RecursiveDir)%(Filename)%(Extension)')" />
+  </Target>
+</Project>

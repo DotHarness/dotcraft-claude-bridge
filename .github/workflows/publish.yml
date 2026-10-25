@@ -1,0 +1,46 @@
+name: Build and publish
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+    tags: ['v*.*.*']
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 10.0.x
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Build plugin
+        shell: pwsh
+        run: ./scripts/build.ps1
+      - name: Test
+        shell: pwsh
+        run: |
+          dotnet test tests/DotCraft.ClaudeCode.Tests/DotCraft.ClaudeCode.Tests.csproj -c Release
+          if ($LASTEXITCODE) { throw 'Bridge tests failed.' }
+          npm test --prefix desktop
+          if ($LASTEXITCODE) { throw 'Desktop module tests failed.' }
+      - uses: actions/upload-artifact@v4
+        with:
+          name: claude-code-plugin
+          path: build/claude-code/
+          include-hidden-files: true
+
+  publish:
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/v')
+    uses: DotHarness/dotcraft-plugins/.github/workflows/publish-plugin.yml@main
+    with:
+      artifact: claude-code-plugin
+      category: Coding
+    secrets: inherit

@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <AssemblyName>DotHarness.ClaudeCode.Plugin</AssemblyName>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="DotCraft.Harness" Version="0.9.4" PrivateAssets="all" ExcludeAssets="runtime" />
+    <PackageReference Include="ModelContextProtocol.AspNetCore" Version="2.2.0" GeneratePathProperty="true" />
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    <InternalsVisibleTo Include="DotCraft.ClaudeCode.Tests" />
+    <None Include=".craft-plugin/plugin.json;settings.schema.json" CopyToOutputDirectory="Never" />
+  </ItemGroup>
+  <Target Name="StagePlugin" AfterTargets="Build">
+    <ItemGroup>
+      <PluginAsset Include="$(MSBuildProjectDirectory)/assets/**/*" />
+      <PluginDesktop Include="$(MSBuildProjectDirectory)/../../desktop/dist/**/*" />
+    </ItemGroup>
+    <RemoveDir Directories="$(TargetDir)plugin" />
+    <Copy SourceFiles="$(TargetPath);$(TargetDir)$(TargetName).deps.json" DestinationFolder="$(TargetDir)plugin/lib" />
+    <Copy SourceFiles="$(PkgModelContextProtocol_AspNetCore)/lib/net10.0/ModelContextProtocol.AspNetCore.dll" DestinationFolder="$(TargetDir)plugin/lib" />
+    <Copy SourceFiles="$(MSBuildProjectDirectory)/.craft-plugin/plugin.json" DestinationFolder="$(TargetDir)plugin/.craft-plugin" />
+    <Copy SourceFiles="$(MSBuildProjectDirectory)/settings.schema.json" DestinationFolder="$(TargetDir)plugin" />
+    <Copy SourceFiles="@(PluginAsset)" DestinationFiles="@(PluginAsset->'$(TargetDir)plugin/assets/%(RecursiveDir)%(Filename)%(Extension)')" />
+    <Copy SourceFiles="@(PluginDesktop)" DestinationFiles="@(PluginDesktop->'$(TargetDir)plugin/desktop/dist/%(RecursiveDir)%(Filename)%(Extension)')" />
+  </Target>
+</Project>
