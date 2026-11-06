@@ -44,5 +44,5 @@ jobs:
     uses: DotHarness/dotcraft-plugins/.github/workflows/publish-plugin.yml@main
     with:
       artifact: claude-code-plugin
-      category: Coding
+      category: Engineering
     secrets: inherit
